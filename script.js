@@ -11,6 +11,27 @@ var fs=require('fs');
 var path=require('path');
 var game;
 
+const charList=['Captain Falcon', 'Donkey Kong', 'Fox', 'Mr. Game & Watch', 'Kirby', 'Bowser',
+    'Link', 'Luigi', 'Mario', 'Marth', 'Mewtwo', 'Ness', 'Peach', 'Pikachu',
+    'Ice Climbers', 'Jigglypuff', 'Samus', 'Yoshi', 'Zelda', 'Sheik', 'Falco',
+    'Young Link', 'Dr. Mario', 'Roy', 'Pichu', 'Ganondorf'];
+
+var playerCharWinrate=new Array(26);
+
+for(i=0;i<26;i++){
+    playerCharWinrate[i]={wins:0, games: 0};
+}
+
+
+//Hashmap with game number
+
+
+//Things to implement
+//Character winrrates
+//Map winrrates
+//Vs Player winrates
+//Vs Character winrates
+
 
 fs.readdir(folder, (err, files) => {
     files.forEach(
@@ -24,18 +45,33 @@ fs.readdir(folder, (err, files) => {
                 playerIndex=1;
             }
 
-            console.log(game.getStats().overall[playerIndex].killCount);
+            //console.log(game.getStats().overall[playerIndex].killCount);
             if( game.getStats().overall[playerIndex].killCount==4){
                 wins++;
+                playerCharWinrate[game.getSettings().players[playerIndex].characterId].wins++;
             }
+            //Need something here to catch games that didn't complete
 
             gamesTotal++;
+            playerCharWinrate[game.getSettings().players[playerIndex].characterId].games++;
 
             //console.log(game.getMetadata().players[playerIndex].names.netplay);
+
+            //console.log(charList[game.getSettings().players[playerIndex].characterId]);
+
+
+
         }
     );
 
     console.log((wins/gamesTotal)*100 +"% Winrate for " + player);
+
+    for(i=0;i<26;i++){
+        if( playerCharWinrate[i].games!=0){
+            console.log((playerCharWinrate[i].wins/playerCharWinrate[i].games)*100 +"% winrate for " + charList[i]);
+        }
+
+    }
 
 })
 
