@@ -16,18 +16,28 @@ const charList=['Captain Falcon', 'Donkey Kong', 'Fox', 'Mr. Game & Watch', 'Kir
     'Ice Climbers', 'Jigglypuff', 'Samus', 'Yoshi', 'Zelda', 'Sheik', 'Falco',
     'Young Link', 'Dr. Mario', 'Roy', 'Pichu', 'Ganondorf'];
 
+
+const stageList = [null, null, 'Fountain of Dreams', 'Pokémon Stadium', "Princess Peach's Castle", 'Kongo Jungle',
+    'Brinstar', 'Corneria', "Yoshi's Story", 'Onett', 'Mute City', 'Rainbow Cruise', 'Jungle Japes',
+    'Great Bay', 'Hyrule Temple', 'Brinstar Depths', "Yoshi's Island", 'Green Greens', 'Fourside',
+    'Mushroom Kingdom I', 'Mushroom Kingdom II', null, 'Venom', 'Poké Floats', 'Big Blue', 'Icicle Mountain',
+    'Icetop', 'Flat Zone', 'Dream Land N64', "Yoshi's Island N64", 'Kongo Jungle N64', 'Battlefield', 'Final Destination']
+
+
 var playerCharWinrate=new Array(26);
+var stageWinrate=new Array(stageList.length);
+
 
 for(i=0;i<26;i++){
     playerCharWinrate[i]={wins:0, games: 0};
 }
+for(i=0;i<stageList.length;i++){
+    stageWinrate[i]={wins:0, games: 0};
+}
 
-
-//Hashmap with game number
 
 
 //Things to implement
-//Character winrrates
 //Map winrrates
 //Vs Player winrates
 //Vs Character winrates
@@ -36,8 +46,12 @@ for(i=0;i<26;i++){
 fs.readdir(folder, (err, files) => {
     files.forEach(
         function (file){
+
+
             var playerIndex;
             game = new SlippiGame("slippiFiles/"+file);
+
+            console.log("Reading Game At: " + game.getMetadata().startAt);
             if(game.getMetadata().players[0].names.netplay==player){
                 playerIndex=0;
             }
@@ -49,13 +63,17 @@ fs.readdir(folder, (err, files) => {
             if( game.getStats().overall[playerIndex].killCount==4){
                 wins++;
                 playerCharWinrate[game.getSettings().players[playerIndex].characterId].wins++;
+                stageWinrate[game.getSettings().stageId].wins++;
             }
             //Need something here to catch games that didn't complete
 
             gamesTotal++;
             playerCharWinrate[game.getSettings().players[playerIndex].characterId].games++;
+            stageWinrate[game.getSettings().stageId].games++;
 
-            //console.log(game.getMetadata().players[playerIndex].names.netplay);
+
+
+
 
             //console.log(charList[game.getSettings().players[playerIndex].characterId]);
 
@@ -70,7 +88,12 @@ fs.readdir(folder, (err, files) => {
         if( playerCharWinrate[i].games!=0){
             console.log((playerCharWinrate[i].wins/playerCharWinrate[i].games)*100 +"% winrate for " + charList[i]);
         }
+    }
 
+    for(i=0;i<stageList.length;i++){
+        if( stageWinrate[i].games!=0){
+            console.log((stageWinrate[i].wins/stageWinrate[i].games)*100 +"% winrate on " + stageList[i]);
+        }
     }
 
 })
